@@ -73,7 +73,7 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
     private List<String> requiredLicenseText = new ArrayList<>();
 
     /**
-     * Creates a new leading license check.
+     * Creates a check.
      */
     public LicenseCommentCheck() {
         setFileExtensions("java");
