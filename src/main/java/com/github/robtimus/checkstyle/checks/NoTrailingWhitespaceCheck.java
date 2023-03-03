@@ -1,5 +1,5 @@
 /*
- * NoSubsequentBlankLinesCheck.java
+ * NoTrailingWhitespaceCheck.java
  * Copyright 2023 Rob Spoor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,42 +19,40 @@ package com.github.robtimus.checkstyle.checks;
 
 import java.io.File;
 import com.puppycrawl.tools.checkstyle.api.AbstractFileSetCheck;
-import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.FileText;
-import com.puppycrawl.tools.checkstyle.utils.CommonUtil;
 
 /**
- * Checks that files do not have multiple blank lines in a row.
+ * Checks that files have no trailing whitespace.
  *
  * @author Rob Spoor
  */
 @SuppressWarnings("nls")
-public class NoSubsequentBlankLinesCheck extends AbstractFileSetCheck {
+public class NoTrailingWhitespaceCheck extends AbstractFileSetCheck {
 
     @Override
-    protected void processFiltered(File file, FileText fileText) throws CheckstyleException {
+    protected void processFiltered(File file, FileText fileText) {
         int lineNumber = 0;
         int lineCount = fileText.size();
 
         while (lineNumber < lineCount) {
-            if (CommonUtil.isBlank(fileText.get(lineNumber))) {
-                int nextNonBlankLine = findNextNonBlankLine(fileText, lineNumber, lineCount);
-                if (nextNonBlankLine - lineNumber > 1) {
+            String line = fileText.get(lineNumber);
+            if (!line.isEmpty()) {
+                int indexOfLastNonWhitespace = indexOfLastNonWhitespace(line);
+                if (indexOfLastNonWhitespace != line.length() - 1) {
                     // Line numbers start at 1, not 0
-                    log(lineNumber + 1, "whitespace.multipleBlankLinesInARow");
-                    lineNumber = nextNonBlankLine;
+                    log(lineNumber + 1, indexOfLastNonWhitespace + 1, "whitespace.trailing");
                 }
             }
             lineNumber++;
         }
     }
 
-    private int findNextNonBlankLine(FileText fileText, int lineNumber, int lineCount) {
-        for (int i = lineNumber + 1; i < lineCount; i++) {
-            if (!CommonUtil.isBlank(fileText.get(i))) {
+    private int indexOfLastNonWhitespace(String line) {
+        for (int i = line.length() - 1; i >= 0; i--) {
+            if (!Character.isWhitespace(line.charAt(i))) {
                 return i;
             }
         }
-        return lineCount;
+        return -1;
     }
 }
