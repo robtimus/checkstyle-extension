@@ -126,6 +126,22 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Automatic-Module-Name>com.github.robtimus.checkstyle</Automatic-Module-Name>
+              <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
+              <Bundle-Name>Additional Checkstyle checks</Bundle-Name>
+              <Bundle-SymbolicName>com.github.robtimus.checkstyle;singleton:=true</Bundle-SymbolicName>
+              <Bundle-Version>${non-snapshot-version}</Bundle-Version>
+              <Bundle-Vendor>Rob Spoor</Bundle-Vendor>
+              <Bundle-License>The Apache Software License, Version 2.0</Bundle-License>
+              <Require-Bundle>net.sf.eclipsecs.checkstyle,net.sf.eclipsecs.core</Require-Bundle>
+              <Bundle-RequiredExecutionEnvironment>JavaSE-1.8</Bundle-RequiredExecutionEnvironment>
+              <Eclipse-LazyStart>true</Eclipse-LazyStart>
+            </manifestEntries>
+          </archive>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -173,13 +189,28 @@
       </plugin>
 
       <plugin>
-        <groupId>org.moditect</groupId>
-        <artifactId>moditect-maven-plugin</artifactId>
+        <groupId>com.github.robtimus</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
       </plugin>
 
       <plugin>
-        <groupId>com.github.robtimus</groupId>
+        <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>calculate-non-snapshot-version</id>
+            <goals>
+              <goal>regex-property</goal>
+            </goals>
+            <configuration>
+              <name>non-snapshot-version</name>
+              <value>${project.version}</value>
+              <regex>-SNAPSHOT</regex>
+              <replacement></replacement>
+              <failIfNoMatch>true</failIfNoMatch>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
@@ -245,54 +276,6 @@
       <id>min-versions</id>
       <properties>
       </properties>
-    </profile>
-
-    <profile>
-      <id>native-module</id>
-      <properties>
-        <version.java>11</version.java>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <!-- Allow JUnit to fully access the test classes -->
-              <argLine>
-                @{argLine}
-                --add-opens com.github.robtimus.checkstyle/com.github.robtimus.checkstyle=ALL-UNNAMED
-              </argLine>
-            </configuration>
-          </plugin>
-
-          <plugin>
-            <groupId>org.moditect</groupId>
-            <artifactId>moditect-maven-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </plugin>
-
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>build-helper-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>generate-sources</phase>
-                <goals>
-                  <goal>add-source</goal>
-                </goals>
-                <configuration>
-                  <sources>
-                    <source>${project.basedir}/src/moditect</source>
-                  </sources>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
   </profiles>
 </project>

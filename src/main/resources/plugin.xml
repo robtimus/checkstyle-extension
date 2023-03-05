@@ -15,8 +15,8 @@
   limitations under the License.
 -->
 
-<!DOCTYPE checkstyle-packages PUBLIC "-//Checkstyle//DTD Package Names Configuration 1.0//EN" "https://checkstyle.org/dtds/packages_1_0.dtd">
-
-<checkstyle-packages>
-  <package name="com.github.robtimus.checkstyle.checks"/>
-</checkstyle-packages>
+<?eclipse version="3.1"?>
+<plugin>
+  <!-- This plugin provides custom Checkstyle modules. -->
+  <extension point="net.sf.eclipsecs.core.checkstyleAddonProvider"/>
+</plugin>

@@ -41,10 +41,10 @@ import com.puppycrawl.tools.checkstyle.utils.CommonUtil;
 /**
  * Checks whether or not a Java source file has a valid leading license comment.
  * <p>
- * A leading license comment is valid if:
+ * A leading license comment is valid if (in order):
  * <ul>
- *   <li>It starts with the name of the file if and only if {@link #setIncludeFilename(boolean)} has been called.</li>
- *   <li>It starts with a valid copyright notice if and only if {@link #setIncludeCopyright(boolean)} has been called.
+ *   <li>It contains the name of the file if and only if {@link #setIncludeFilename(boolean)} has been called.</li>
+ *   <li>It contains a valid copyright notice if and only if {@link #setIncludeCopyright(boolean)} has been called.
  *       Calling {@link #setRequiredCopyrightYear(String)} and {@link #setRequiredCopyrightHolder(String)} imply this.</li>
  *   <li>There is an empty line before the remainder of the license text if and only if {@link #setIncludeEmptyLineBeforeLicenseText(boolean)} has
  *       been called.</li>
