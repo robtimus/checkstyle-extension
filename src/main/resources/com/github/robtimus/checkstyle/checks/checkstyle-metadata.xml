@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2023 Rob Spoor
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!DOCTYPE checkstyle-metadata PUBLIC "-//Checkstyle//DTD Check Metadata 1.1//EN" "https://checkstyle.org/eclipse-cs/dtds/checkstyle-metadata_1_1.dtd">
+
+<checkstyle-metadata>
+  <rule-group-metadata name="Additional checks" priority="1600">
+    <rule-metadata name="%LicenseComment.name" internal-name="LicenseComment" parent="Checker">
+      <alternative-name internal-name="com.github.robtimus.checkstyle.checks.LicenseCommentCheck"/>
+      <description>%LicenseComment.desc</description>
+
+      <property-metadata name="includeFilename" datatype="Boolean" default-value="false">
+        <description>%LicenseComment.includeFilename.desc</description>
+      </property-metadata>
+      <property-metadata name="includeCopyright" datatype="Boolean" default-value="false">
+        <description>%LicenseComment.includeCopyright.desc</description>
+      </property-metadata>
+      <property-metadata name="requiredCopyrightYear" datatype="String">
+        <description>%LicenseComment.requiredCopyrightYear.desc</description>
+      </property-metadata>
+      <property-metadata name="requiredCopyrightHolder" datatype="String">
+        <description>%LicenseComment.requiredCopyrightHolder.desc</description>
+      </property-metadata>
+      <property-metadata name="includeEmptyLineBeforeLicenseText" datatype="Boolean" default-value="false">
+        <description>%LicenseComment.includeEmptyLineBeforeLicenseText.desc</description>
+      </property-metadata>
+      <property-metadata name="licenseText" datatype="String">
+        <description>%LicenseComment.licenseText.desc</description>
+      </property-metadata>
+
+      <message-key key="licenseComment.noLicense"/>
+      <message-key key="licenseComment.disallowedFilename"/>
+      <message-key key="licenseComment.missingFilename"/>
+      <message-key key="licenseComment.invalidFilename"/>
+      <message-key key="licenseComment.disallowedCopyright"/>
+      <message-key key="licenseComment.missingCopyright"/>
+      <message-key key="licenseComment.invalidCopyright"/>
+      <message-key key="licenseComment.invalidCopyrightYearRange"/>
+      <message-key key="licenseComment.invalidCopyrightYear"/>
+      <message-key key="licenseComment.invalidCopyrightHolder"/>
+      <message-key key="licenseComment.disallowedEmptyLine"/>
+      <message-key key="licenseComment.missingEmptyLine"/>
+      <message-key key="licenseComment.licenseTextMismatch"/>
+    </rule-metadata>
+
+    <rule-metadata name="%NoBlankLineAfterSymbols.name" internal-name="NoBlankLineAfterSymbols" parent="Checker">
+      <alternative-name internal-name="com.github.robtimus.checkstyle.checks.NoBlankLineAfterSymbolsCheck"/>
+      <description>%NoBlankLineAfterSymbols.desc</description>
+
+      <property-metadata name="symbols" datatype="String" default-value="({[">
+        <description>%NoBlankLineAfterSymbols.symbols.desc</description>
+      </property-metadata>
+
+      <message-key key="whitespace.blankLineAfterSymbols"/>
+    </rule-metadata>
+
+    <rule-metadata name="%NoBlankLineBeforeSymbols.name" internal-name="NoBlankLineBeforeSymbols" parent="Checker">
+      <alternative-name internal-name="com.github.robtimus.checkstyle.checks.NoBlankLineBeforeSymbolsCheck"/>
+      <description>%NoBlankLineBeforeSymbols.desc</description>
+
+      <property-metadata name="symbols" datatype="String" default-value=")}];">
+        <description>%NoBlankLineBeforeSymbols.symbols.desc</description>
+      </property-metadata>
+
+      <message-key key="whitespace.blankLineBeforeSymbols"/>
+    </rule-metadata>
+
+    <rule-metadata name="%NoSubsequentBlankLines.name" internal-name="NoSubsequentBlankLines" parent="Checker">
+      <alternative-name internal-name="com.github.robtimus.checkstyle.checks.NoSubsequentBlankLinesCheck"/>
+      <description>%NoSubsequentBlankLines.desc</description>
+
+      <message-key key="whitespace.multipleBlankLinesInARow"/>
+    </rule-metadata>
+
+    <rule-metadata name="%NoTrailingWhitespace.name" internal-name="NoTrailingWhitespace" parent="Checker">
+      <alternative-name internal-name="com.github.robtimus.checkstyle.checks.NoTrailingWhitespace"/>
+      <description>%NoTrailingWhitespace.desc</description>
+
+      <message-key key="whitespace.trailing"/>
+    </rule-metadata>
+  </rule-group-metadata>
+</checkstyle-metadata>
