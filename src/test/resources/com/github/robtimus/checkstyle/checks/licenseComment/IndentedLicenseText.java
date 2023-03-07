@@ -2,9 +2,11 @@
  * IndentedLicenseText.java
  * Copyright 2023 Rob Spoor
  * 
- * This Source Code Form is subject to the terms of the Mozilla
- * Public License, v. 2.0. If a copy of the MPL was not distributed
- * with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  */
 public class HelloWorld {
     // Irrelevant

@@ -38,8 +38,24 @@
       <property-metadata name="includeEmptyLineBeforeLicenseText" datatype="Boolean" default-value="false">
         <description>%LicenseComment.includeEmptyLineBeforeLicenseText.desc</description>
       </property-metadata>
-      <property-metadata name="licenseText" datatype="String">
-        <description>%LicenseComment.licenseText.desc</description>
+      <property-metadata name="predefinedLicenseText" datatype="SingleSelect">
+        <description>%LicenseComment.predefinedLicenseText.desc</description>
+        <enumeration>
+          <property-value-option value=""/>
+          <property-value-option value="Apache-2.0"/>
+          <property-value-option value="BSD-2-Clause"/>
+          <property-value-option value="EPL-1.0"/>
+          <property-value-option value="EPL-2.0"/>
+          <property-value-option value="GPL-2.0"/>
+          <property-value-option value="GPL-3.0"/>
+          <property-value-option value="LGPL-2.0"/>
+          <property-value-option value="LGPL-2.1"/>
+          <property-value-option value="MIT"/>
+          <property-value-option value="MPL-2.0"/>
+        </enumeration>
+      </property-metadata>
+      <property-metadata name="customLicenseText" datatype="String">
+        <description>%LicenseComment.customLicenseText.desc</description>
       </property-metadata>
 
       <message-key key="licenseComment.noLicense"/>

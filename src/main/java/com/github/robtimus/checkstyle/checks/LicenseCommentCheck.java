@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
@@ -31,10 +30,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import com.google.common.collect.ImmutableSet;
 import com.puppycrawl.tools.checkstyle.api.AbstractFileSetCheck;
+import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.FileText;
 import com.puppycrawl.tools.checkstyle.utils.CommonUtil;
 
@@ -48,7 +54,8 @@ import com.puppycrawl.tools.checkstyle.utils.CommonUtil;
  *       Calling {@link #setRequiredCopyrightYear(String)} and {@link #setRequiredCopyrightHolder(String)} imply this.</li>
  *   <li>There is an empty line before the remainder of the license text if and only if {@link #setIncludeEmptyLineBeforeLicenseText(boolean)} has
  *       been called.</li>
- *   <li>The remainder of the license text is valid according to what's been set with {@link #setLicenseText(String)}.</li>
+ *   <li>The remainder of the license text is valid according to what's been set with either {@link #setPredefinedLicenseText(String)} or
+ *       {@link #setCustomLicenseText(String)}.</li>
  * </ul>
  *
  * @author Rob Spoor
@@ -70,7 +77,8 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
     private String requiredCopyrightHolder;
     private boolean includeEmptyLineBeforeLicenseText;
 
-    private List<String> requiredLicenseText = new ArrayList<>();
+    private List<String> predefinedLicenseText;
+    private List<String> customLicenseText;
 
     /**
      * Creates a check.
@@ -80,11 +88,12 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
     }
 
     @Override
-    protected void processFiltered(File file, FileText fileText) {
+    protected void processFiltered(File file, FileText fileText) throws CheckstyleException {
+        List<String> requiredLicenseText = getRequiredLicenseText();
         List<Line> licenseText = readLicenseText(fileText);
 
-        // Line numbers start at 1, not 0
-        LicenseTextContext context = new LicenseTextContext(licenseText, 1);
+        // line numbers start at 1, not 0
+        LicenseTextContext context = new LicenseTextContext(requiredLicenseText, licenseText, 1);
 
         if (licenseText.isEmpty()) {
             log(context.lineNumber, "licenseComment.noLicense");
@@ -94,13 +103,23 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
         // skip past the comment start
         context.lineNumber++;
 
-        validateFilename(file, licenseText, context);
+        validateFilename(file, context);
 
         validateCopyright(context);
 
         validateEmptyLineBeforeLicenseText(context);
 
-        validateLicenseText(context.licenseText, context.lineNumber);
+        validateLicenseText(context);
+    }
+
+    List<String> getRequiredLicenseText() throws CheckstyleException {
+        List<List<String>> candidates = Stream.of(predefinedLicenseText, customLicenseText)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        if (candidates.size() == 1) {
+            return candidates.get(0);
+        }
+        throw new CheckstyleException("Not exactly one license text defined");
     }
 
     private List<Line> readLicenseText(FileText fileText) {
@@ -109,12 +128,12 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
             return Collections.emptyList();
         }
         List<Line> result = new ArrayList<>();
-        for (int i = 1; i < lineCount && !" */".equals(fileText.get(i)); i++) {
+        for (int i = 1; i < lineCount && !fileText.get(i).contains("*/"); i++) {
             int startColumn = endOfCommentPrefix(fileText.get(i));
-            // Column numbers start at 0
+            // column numbers start at 0
             result.add(new Line(fileText.get(i).substring(startColumn), startColumn));
         }
-        // No */ found means a compiler error, no need to report a Checkstyle error
+        // no */ found means a compiler error, no need to report a Checkstyle error
         return result;
     }
 
@@ -133,21 +152,21 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
         return 0;
     }
 
-    private void validateFilename(File file, List<Line> licenseText, LicenseTextContext context) {
+    private void validateFilename(File file, LicenseTextContext context) {
         if (includeFilename) {
-            if (hasPotentialLicenseFile(context.licenseText)) {
+            if (hasPotentialLicenseFile(context.licenseText, context.requiredLicenseText)) {
                 validateFilename(context.licenseText, context.lineNumber, file);
                 context.nextLine();
             } else {
                 log(context.lineNumber, "licenseComment.missingFilename");
             }
-        } else if (hasPotentialLicenseFile(licenseText)) {
+        } else if (hasPotentialLicenseFile(context.licenseText, context.requiredLicenseText)) {
             log(context.lineNumber, "licenseComment.disallowedFilename");
             context.nextLine();
         }
     }
 
-    boolean hasPotentialLicenseFile(List<Line> licenseText) {
+    boolean hasPotentialLicenseFile(List<Line> licenseText, List<String> requiredLicenseText) {
         if (licenseText.isEmpty()) {
             return false;
         }
@@ -241,7 +260,7 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
     private void validateEmptyLineBeforeLicenseText(LicenseTextContext context) {
         if (includeEmptyLineBeforeLicenseText) {
             if (hasEmptyLine(context.licenseText)) {
-                // No need to validate anything
+                // no need to validate anything
                 context.nextLine();
             } else {
                 log(context.lineNumber, "licenseComment.missingEmptyLine");
@@ -260,12 +279,12 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
         return line.content().isEmpty();
     }
 
-    private void validateLicenseText(List<Line> licenseText, int firstLineNumber) {
+    private void validateLicenseText(LicenseTextContext context) {
         final String textMismatchKey = "licenseComment.licenseTextMismatch";
 
-        Iterator<Line> actualLicenseTextIterator = licenseText.iterator();
-        Iterator<String> requiredLicenseTextIterator = requiredLicenseText.iterator();
-        int lineNumber = firstLineNumber;
+        Iterator<Line> actualLicenseTextIterator = context.licenseText.iterator();
+        Iterator<String> requiredLicenseTextIterator = context.requiredLicenseText.iterator();
+        int lineNumber = context.lineNumber;
         while (actualLicenseTextIterator.hasNext() && requiredLicenseTextIterator.hasNext()) {
             Line actualLicenseTextLine = actualLicenseTextIterator.next();
             String requiredLicenseTextLine = requiredLicenseTextIterator.next();
@@ -334,7 +353,7 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
     }
 
     /**
-     * Sets the expected license text. This can be specified as a literal text, or using one of the pre-defined licenses:
+     * Sets the expected predefined license. This must be one of the following:
      * <ul>
      *   <li><a href="https://opensource.org/licenses/Apache-2.0">Apache-2.0</a>: the Apache License 2.0</li>
      *   <li><a href="https://opensource.org/licenses/BSD-2-Clause">BSD-2-Clause</a>: the 2-Clause BSD License / FreeBSD License /
@@ -349,30 +368,26 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
      *   <li><a href="https://opensource.org/licenses/MPL-2.0">MPL-2.0</a>: the Mozilla Public License 2.0</li>
      * </ul>
      *
-     * @param licenseText The expected license text.
+     * @param predefinedLicense The expected predefined license.
      */
-    public void setLicenseText(String licenseText) {
-        try (InputStream predefinedLicenseTextStream = getClass().getResourceAsStream("licenses/" + licenseText)) {
-            if (predefinedLicenseTextStream == null) {
-                setLicenseText(new StringReader(licenseText), true);
-            } else {
-                setLicenseText(predefinedLicenseTextStream, false);
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    public final void setPredefinedLicenseText(String predefinedLicense) {
+        this.predefinedLicenseText = PredefinedLicenseCache.getLicenseText(predefinedLicense);
     }
 
-    private void setLicenseText(InputStream inputStream, boolean stripIndent) {
-        setLicenseText(new InputStreamReader(inputStream, StandardCharsets.UTF_8), stripIndent);
+    /**
+     * Sets the expected license text.
+     *
+     * @param customLicenseText The expected license text.
+     */
+    public void setCustomLicenseText(String customLicenseText) {
+        this.customLicenseText = parseLicenseText(customLicenseText);
     }
 
-    private void setLicenseText(Reader reader, boolean stripIndent) {
-        BufferedReader bufferedReader = new BufferedReader(reader);
-        requiredLicenseText = bufferedReader.lines().collect(Collectors.toList());
-        if (stripIndent) {
-            requiredLicenseText = stripIndent(requiredLicenseText);
-        }
+    private List<String> parseLicenseText(String licenseText) {
+        List<String> lines = new BufferedReader(new StringReader(licenseText))
+                .lines()
+                .collect(Collectors.toList());
+        return stripIndent(lines);
     }
 
     static List<String> stripIndent(List<String> licenseText) {
@@ -396,12 +411,13 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
             return result;
         }
         return result.stream()
-                .map(line -> line.substring(commonIndentation))
+                .map(line -> removeIndentation(line, commonIndentation))
                 .collect(Collectors.toList());
     }
 
     private static int commonIndentation(List<String> lines) {
         return lines.stream()
+                .filter(line -> !CommonUtil.isBlank(line))
                 .mapToInt(LicenseCommentCheck::indexOfNonWhitespace)
                 .min()
                 .orElse(0);
@@ -413,15 +429,18 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
                 return i;
             }
         }
+        // should not occur, as blank lines are omitted when calculating the common indentation
         return line.length();
     }
 
-    /**
-     * A representation of a single line.
-     *
-     * @author Rob Spoor
-     */
-    public static final class Line {
+    private static String removeIndentation(String line, int indentation) {
+        if (CommonUtil.isBlank(line)) {
+            return "";
+        }
+        return line.substring(indentation);
+    }
+
+    static final class Line {
 
         private final String content;
         private final int startColumn;
@@ -456,10 +475,12 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
     }
 
     private static final class LicenseTextContext {
+        private final List<String> requiredLicenseText;
         private List<Line> licenseText;
         private int lineNumber;
 
-        private LicenseTextContext(List<Line> licenseText, int lineNumber) {
+        private LicenseTextContext(List<String> requiredLicenseText, List<Line> licenseText, int lineNumber) {
+            this.requiredLicenseText = requiredLicenseText;
             this.licenseText = licenseText;
             this.lineNumber = lineNumber;
         }
@@ -467,6 +488,34 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
         private void nextLine() {
             licenseText = licenseText.subList(1, licenseText.size());
             lineNumber++;
+        }
+    }
+
+    private static final class PredefinedLicenseCache {
+
+        private static final Set<String> LICENSES = ImmutableSet.of(
+                "Apache-2.0", "BSD-2-Clause", "EPL-1.0", "EPL-2.0", "GPL-2.0", "GPL-3.0", "LGPL-2.0", "LGPL-2.1", "MIT", "MPL-2.0");
+
+        private static final Map<String, List<String>> LICENSE_TEXTS = new ConcurrentHashMap<>();
+
+        private PredefinedLicenseCache() {
+        }
+
+        private static List<String> getLicenseText(String license) {
+            if (LICENSES.contains(license)) {
+                return LICENSE_TEXTS.computeIfAbsent(license, PredefinedLicenseCache::loadLicenseText);
+            }
+            throw new IllegalArgumentException("Unknown license: " + license);
+        }
+
+        private static List<String> loadLicenseText(String license) {
+            try (InputStream inputStream = LicenseCommentCheck.class.getResourceAsStream("licenses/" + license)) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+                List<String> licenseText = reader.lines().collect(Collectors.toList());
+                return Collections.unmodifiableList(licenseText);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
         }
     }
 }
