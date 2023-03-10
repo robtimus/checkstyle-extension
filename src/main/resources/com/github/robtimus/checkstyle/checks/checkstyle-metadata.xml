@@ -18,7 +18,7 @@
 <!DOCTYPE checkstyle-metadata PUBLIC "-//Checkstyle//DTD Check Metadata 1.1//EN" "https://checkstyle.org/eclipse-cs/dtds/checkstyle-metadata_1_1.dtd">
 
 <checkstyle-metadata>
-  <rule-group-metadata name="Additional checks" priority="1600">
+  <rule-group-metadata name="%RuleGroup.name" priority="1600">
     <rule-metadata name="%LicenseComment.name" internal-name="LicenseComment" parent="Checker">
       <alternative-name internal-name="com.github.robtimus.checkstyle.checks.LicenseCommentCheck"/>
       <description>%LicenseComment.desc</description>
