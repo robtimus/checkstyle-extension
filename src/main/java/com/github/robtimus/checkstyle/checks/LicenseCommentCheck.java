@@ -63,6 +63,9 @@ import com.puppycrawl.tools.checkstyle.utils.CommonUtil;
 @SuppressWarnings("nls")
 public class LicenseCommentCheck extends AbstractFileSetCheck {
 
+    private static final Set<String> PREDEFINED_LICENSES = ImmutableSet.of(
+            "Apache-2.0", "BSD-2-Clause", "EPL-1.0", "EPL-2.0", "GPL-2.0", "GPL-3.0", "LGPL-2.0", "LGPL-2.1", "MIT", "MPL-2.0");
+
     private static final Pattern COPYRIGHT_PATTERN = Pattern.compile("Copyright (?<yearFrom>\\d{4})(?:-(?<yearTo>\\d{4}))?(?: +(?<holder>.*))?");
 
     private static final int START_COLUMN_YEAR_FROM = 10; // skip past 'Copyright '
@@ -374,6 +377,10 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
         this.predefinedLicenseText = PredefinedLicenseCache.getLicenseText(predefinedLicense);
     }
 
+    static Set<String> predefinedLicenses() {
+        return PREDEFINED_LICENSES;
+    }
+
     /**
      * Sets the expected license text.
      *
@@ -493,16 +500,13 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
 
     private static final class PredefinedLicenseCache {
 
-        private static final Set<String> LICENSES = ImmutableSet.of(
-                "Apache-2.0", "BSD-2-Clause", "EPL-1.0", "EPL-2.0", "GPL-2.0", "GPL-3.0", "LGPL-2.0", "LGPL-2.1", "MIT", "MPL-2.0");
-
         private static final Map<String, List<String>> LICENSE_TEXTS = new ConcurrentHashMap<>();
 
         private PredefinedLicenseCache() {
         }
 
         private static List<String> getLicenseText(String license) {
-            if (LICENSES.contains(license)) {
+            if (PREDEFINED_LICENSES.contains(license)) {
                 return LICENSE_TEXTS.computeIfAbsent(license, PredefinedLicenseCache::loadLicenseText);
             }
             throw new IllegalArgumentException("Unknown license: " + license);

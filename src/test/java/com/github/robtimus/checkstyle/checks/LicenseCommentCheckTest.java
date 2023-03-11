@@ -717,6 +717,12 @@ class LicenseCommentCheckTest {
     @TestInstance(Lifecycle.PER_CLASS)
     class PredefinedLicense {
 
+        @Test
+        void testExistingLicenses() {
+            Set<String> expectedPredefinedLicenses = predefinedLicenseNames().collect(Collectors.toSet());
+            assertEquals(expectedPredefinedLicenses, LicenseCommentCheck.predefinedLicenses());
+        }
+
         @ParameterizedTest(name = "{0}")
         @MethodSource("predefinedLicenses")
         void testExistingPredefinedLicense(String predefinedLicense) {
@@ -743,7 +749,7 @@ class LicenseCommentCheckTest {
             assertThrows(IllegalArgumentException.class, () -> check.setPredefinedLicenseText(resource));
         }
 
-        Stream<Arguments> predefinedLicenses() {
+        Stream<String> predefinedLicenseNames() {
             return assertDoesNotThrow(() -> {
                 URI uri = LicenseCommentCheck.class.getResource("licenses/Apache-2.0").toURI();
                 Path parentDirectory = Paths.get(uri).getParent();
@@ -751,11 +757,15 @@ class LicenseCommentCheckTest {
                     return paths
                             .filter(p -> !parentDirectory.equals(p))
                             .map(p -> p.getFileName().toString())
-                            .map(Arguments::arguments)
                             .collect(Collectors.toList())
                             .stream();
                 }
             });
+        }
+
+        Stream<Arguments> predefinedLicenses() {
+            return predefinedLicenseNames()
+                    .map(Arguments::arguments);
         }
     }
 
