@@ -16,15 +16,21 @@
 -->
 
 <project name="checkstyle-extension"
-  xmlns="https://maven.apache.org/xsd/decoration-1.7.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="https://maven.apache.org/xsd/decoration-1.7.0.xsd https://maven.apache.org/xsd/decoration-1.7.0.xsd">
+  xmlns="http://maven.apache.org/DECORATION/1.8.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.8.0 https://maven.apache.org/xsd/decoration-1.8.0.xsd">
 
   <body>
     <menu name="checkstyle-extension">
       <item name="Overview" href="index.html" />
       <item name="Download" href="download.html" />
       <item name="Releases" href="https://github.com/robtimus/checkstyle-extension/releases" />
-      <item name="Javadoc" href="apidocs/index.html" />
+    </menu>
+    <menu name="Checks">
+      <item name="LicenseComment" href="checks/LicenseComment.html"/>
+      <item name="NoBlankLineAfterSymbols" href="checks/NoBlankLineAfterSymbols.html"/>
+      <item name="NoBlankLineBeforeSymbols" href="checks/NoBlankLineBeforeSymbols.html"/>
+      <item name="NoSubsequentBlankLines" href="checks/NoSubsequentBlankLines.html"/>
+      <item name="NoTrailingWhitespace" href="checks/NoTrailingWhitespace.html"/>
     </menu>
   </body>
 </project>
