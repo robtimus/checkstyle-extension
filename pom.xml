@@ -70,6 +70,7 @@
       <groupId>com.puppycrawl.tools</groupId>
       <artifactId>checkstyle</artifactId>
       <version>${version.checkstyle}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
