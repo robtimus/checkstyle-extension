@@ -101,6 +101,19 @@ class Invalid {
 }
 ```
 
+To use a custom license text:
+
+```
+<module name="LicenseComment">
+  <property name="customLicenseText" value="&#10;
+    This Source Code Form is subject to the terms of the Mozilla&#10;
+    Public License, v. 2.0. If a copy of the MPL was not distributed&#10;
+    with this file, You can obtain one at https://mozilla.org/MPL/2.0/."/>
+</module>
+```
+
+Note that the license text needs to be set using the `value` attribute. This means that characters like `"` need to be replaced with the equivalent XML entity like `&quot;`, and any line breaks need to be explicitly specified as `&#10;`. To keep the text somewhat readable, any common leading whitespace will be discarded, as well as any blank first and last line. Therefore, the above example is the same as using predefined license text `MPL-2.0`.
+
 ### Violation Messages
 
 * [licenseComment.noLicense](https://github.com/search?q=path%3Asrc%2Fmain%2Fresources%2Fcom%2Fgithub%2Frobtimus%2Fcheckstyle%2Fchecks+filename%3Amessages*.properties+repo%3Arobtimus%2Fcheckstyle-extension+%22licenseComment.noLicense%22)
