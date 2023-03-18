@@ -265,6 +265,7 @@
     <profile>
       <id>min-versions</id>
       <properties>
+        <version.checkstyle>9.3</version.checkstyle>
       </properties>
     </profile>
   </profiles>
