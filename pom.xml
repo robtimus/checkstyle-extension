@@ -208,7 +208,7 @@
               <value>${project.version}</value>
               <regex>-SNAPSHOT</regex>
               <replacement></replacement>
-              <failIfNoMatch>true</failIfNoMatch>
+              <failIfNoMatch>false</failIfNoMatch>
             </configuration>
           </execution>
         </executions>
