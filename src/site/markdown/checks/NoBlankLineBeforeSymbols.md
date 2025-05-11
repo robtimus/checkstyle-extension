@@ -20,13 +20,13 @@ Checks that files do not contain blank lines before lines that only consist of s
 
 To configure the default check:
 
-```
+```xml
 <module name="NoBlankLineBeforeSymbols"/>
 ```
 
 Example:
 
-```
+```java
 class Invalid {
 // Violation: Blank line before a line containing only symbols from ')}];'.
 }

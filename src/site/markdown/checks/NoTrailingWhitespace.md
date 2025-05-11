@@ -14,13 +14,13 @@ Checks that files have no trailing whitespace.
 
 To configure the default check:
 
-```
+```xml
 <module name="NoTrailingWhitespace"/>
 ```
 
 Example:
 
-```
+```java
 class Valid {
 // OK: no trailing whitespace
     int x = 0; // OK: no trailing whitespace

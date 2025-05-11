@@ -47,7 +47,7 @@ The license text must be defined using either `predefinedLicenseText` or `custom
 
 To require a simple MPL-2.0 license:
 
-```
+```xml
 <module name="LicenseComment">
   <property name="predefinedLicenseText" value="MPL-2.0"/>
 </module>
@@ -55,7 +55,7 @@ To require a simple MPL-2.0 license:
 
 Example:
 
-```
+```java
 /**
  * This Source Code Form is subject to the terms of the Mozilla
  * Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -67,7 +67,7 @@ class Valid {
 
 To require a filename, copyright notice and empty line before the license text:
 
-```
+```xml
 <module name="LicenseComment">
   <property name="includeFilename" value="true"/>
   <property name="includeCopyright" value="true"/>
@@ -78,7 +78,7 @@ To require a filename, copyright notice and empty line before the license text:
 
 Example:
 
-```
+```java
 /**
  * Valid.java
  * Copyright 2023 John Doe
@@ -103,7 +103,7 @@ class Invalid {
 
 To use a custom license text:
 
-```
+```xml
 <module name="LicenseComment">
   <property name="customLicenseText" value="&#10;
     This Source Code Form is subject to the terms of the Mozilla&#10;

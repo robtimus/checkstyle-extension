@@ -20,13 +20,13 @@ Checks that files do not contain blank lines after lines that only consist of sp
 
 To configure the default check:
 
-```
+```xml
 <module name="NoBlankLineAfterSymbols"/>
 ```
 
 Example:
 
-```
+```java
 class Invalid {
     {
 // Violation: Blank line after a line containing only symbols from '({['.

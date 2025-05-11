@@ -14,13 +14,13 @@ Checks that files do not have multiple blank lines in a row.
 
 To configure the default check:
 
-```
+```xml
 <module name="NoSubsequentBlankLines"/>
 ```
 
 Example:
 
-```
+```java
 class Valid {
 // OK: single blank line
 }

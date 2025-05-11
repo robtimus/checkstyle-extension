@@ -19,7 +19,7 @@
 
 Add a dependency to your existing `maven-checkstyle-plugin` definition. For instance:
 
-```
+```xml
 <plugin>
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-checkstyle-plugin</artifactId>
