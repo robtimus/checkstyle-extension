@@ -132,7 +132,7 @@
             <manifestEntries>
               <Automatic-Module-Name>com.github.robtimus.checkstyle</Automatic-Module-Name>
               <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
-              <Bundle-Name>Additional Checkstyle checks</Bundle-Name>
+              <Bundle-Name>Robtimus Checkstyle extension</Bundle-Name>
               <Bundle-SymbolicName>com.github.robtimus.checkstyle;singleton:=true</Bundle-SymbolicName>
               <Bundle-Version>${non-snapshot-version}</Bundle-Version>
               <Bundle-Vendor>Rob Spoor</Bundle-Vendor>
