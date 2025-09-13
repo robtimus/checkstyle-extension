@@ -22,12 +22,12 @@
   <parent>
     <groupId>com.github.robtimus</groupId>
     <artifactId>robtimus-parent</artifactId>
-    <version>1.18</version>
+    <version>2.0</version>
     <relativePath />
   </parent>
 
   <artifactId>checkstyle-extension</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>2.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>checkstyle-extension</name>
@@ -62,7 +62,9 @@
   </issueManagement>
 
   <properties>
-    <version.junit-support>2.2</version.junit-support>
+    <version.java>11</version.java>
+
+    <version.junit-support>3.1</version.junit-support>
   </properties>
 
   <dependencies>
@@ -106,8 +108,7 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
           <configuration>
-            <links>
-            </links>
+            <sourcepath>${project.basedir}/src/main/java</sourcepath>
           </configuration>
         </plugin>
       </plugins>
@@ -122,6 +123,13 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>properties</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
@@ -222,6 +230,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>
+            @{argLine}
+            -javaagent:${org.mockito:mockito-core:jar}
+          </argLine>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -265,7 +279,7 @@
     <profile>
       <id>min-versions</id>
       <properties>
-        <version.checkstyle>9.3</version.checkstyle>
+        <version.checkstyle>10.22.0</version.checkstyle>
       </properties>
     </profile>
   </profiles>

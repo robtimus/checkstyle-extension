@@ -27,9 +27,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Year;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -64,8 +62,8 @@ import com.puppycrawl.tools.checkstyle.utils.CommonUtil;
 @SuppressWarnings("nls")
 public class LicenseCommentCheck extends AbstractFileSetCheck {
 
-    private static final Set<String> PREDEFINED_LICENSES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-            "Apache-2.0", "BSD-2-Clause", "EPL-1.0", "EPL-2.0", "GPL-2.0", "GPL-3.0", "LGPL-2.0", "LGPL-2.1", "MIT", "MPL-2.0")));
+    private static final Set<String> PREDEFINED_LICENSES = Set.of(
+            "Apache-2.0", "BSD-2-Clause", "EPL-1.0", "EPL-2.0", "GPL-2.0", "GPL-3.0", "LGPL-2.0", "LGPL-2.1", "MIT", "MPL-2.0");
 
     private static final Pattern COPYRIGHT_PATTERN = Pattern.compile("Copyright (?<yearFrom>\\d{4})(?:-(?<yearTo>\\d{4}))?(?: +(?<holder>.*))?");
 
