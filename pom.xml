@@ -282,5 +282,12 @@
         <version.checkstyle>10.22.0</version.checkstyle>
       </properties>
     </profile>
+
+    <profile>
+      <id>latest-checkstyle-version</id>
+      <properties>
+        <version.checkstyle>[12,)</version.checkstyle>
+      </properties>
+    </profile>
   </profiles>
 </project>

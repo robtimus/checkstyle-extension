@@ -58,6 +58,22 @@ jobs:
       - name: Test with Maven
         run: mvn test --file pom.xml -B --no-transfer-progress -Pmin-versions
 
+  latest-checkstyle-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Build with Maven
+        # Show transfer progress so a newly downloaded Checkstyle version is visible
+        run: mvn package --file pom.xml -B -Platest-checkstyle-version
+
   site:
     runs-on: ubuntu-latest
     steps:
