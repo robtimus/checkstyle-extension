@@ -246,6 +246,7 @@ public class LicenseCommentCheck extends AbstractFileSetCheck {
         }
     }
 
+    @SuppressWarnings("squid:S8688")
     boolean isValidCopyrightYear(String year) {
         return "current".equals(requiredCopyrightYear)
                 ? Year.now().toString().equals(year)
